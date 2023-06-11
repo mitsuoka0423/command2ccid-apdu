@@ -1,15 +1,53 @@
 <html>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.22/vue.min.js"></script>
-
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+  </head>
   <body>
     <div id="app">
-      <input v-model="message" />
-      <h2>CCID</h2>
-      <div>{{ ccid() }}</div>
-      <h2>APDU</h2>
-      <div>{{ apdu() }}</div>
+      <div class="container">
+        <input class="input" v-model="message" />
+
+        <div class="box">
+          <h2 class="title is-2">CCID</h2>
+          <table class="table">
+            <thead>
+              <tr>
+                <td>Key</td>
+                <td>Value</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in ccid()">
+                <td>{{item.key}}</td>
+                <td>{{item.value}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div>{{ ccid() }}</div>
+        </div>
+
+        <div class="box">
+          <h2 class="title is-2">APDU</h2>
+          <table class="table">
+            <thead>
+              <tr>
+                <td>Key</td>
+                <td>Value</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in apdu()">
+                <td>{{item.key}}</td>
+                <td>{{item.value}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div>{{ apdu() }}</div>
+        </div>
+      </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.22/vue.min.js"></script>
     <script>
       const app = new Vue({
         el: "#app",
@@ -17,38 +55,23 @@
           message: "6B 04 00 00 00 00 00 00 00 00 FF 56 00 00",
         },
         methods: {
-          ccid: function() {
-            const result = {
-              bMessageType: '',
-              dwLength: '',
-              bSlot: '',
-              bSeq: '',
-              abRFU: '',
-              abData: '',
-            };
+          ccid: function () {
+            const result = [];
 
-            const ccid = this.message.trim().split(' ');
-            result.bMessageType = ccid.slice(0, 1);
-            result.dwLength = ccid.slice(1, 5);
-            result.bSlot = ccid.slice(5, 6);
-            result.bSeq = ccid.slice(6, 7);
-            result.abRFU = ccid.slice(7, 10);
-            result.abData = ccid.slice(10);
+            const ccid = this.message.trim().split(" ");
+            result.push({ key: "bMessageType", value: ccid.slice(0, 1) });
+            result.push({ key: "dwLength", value: ccid.slice(1, 5) });
+            result.push({ key: "bSlot", value: ccid.slice(5, 6) });
+            result.push({ key: "bSeq", value: ccid.slice(6, 7) });
+            result.push({ key: "abRFU", value: ccid.slice(7, 10) });
+            result.push({ key: "abData", value: ccid.slice(10) });
 
-            return JSON.stringify(result, null, 2);
+            return result;
           },
-          apdu: function() {
-            const result = {
-              CLA: '',
-              INS: '',
-              P1: '',
-              P2: '',
-              Lc: '',
-              DataField: '',
-              Le: '',
-            };
+          apdu: function () {
+            const result = [];
 
-            const apdu = this.message.trim().split(' ').slice(10);
+            const apdu = this.message.trim().split(" ").slice(10);
             result.CLA = apdu.slice(0, 1);
             result.INS = apdu.slice(1, 2);
             result.P1 = apdu.slice(2, 3);
@@ -57,7 +80,15 @@
             result.DataField = apdu.slice(5, 8);
             result.Le = apdu.slice(8, 9);
 
-            return JSON.stringify(result, null, 2);
+            result.push({ key: "CLA", value: apdu.slice(0, 1) });
+            result.push({ key: "INS", value: apdu.slice(1, 2) });
+            result.push({ key: "P1", value: apdu.slice(2, 3) });
+            result.push({ key: "P2", value: apdu.slice(3, 4) });
+            result.push({ key: "Lc", value: apdu.slice(4, 5) });
+            result.push({ key: "DataField", value: apdu.slice(5, 8) });
+            result.push({ key: "Le", value: apdu.slice(8, 9) });
+
+            return result;
           },
         },
       });
