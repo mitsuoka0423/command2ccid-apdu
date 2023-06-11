@@ -116,7 +116,6 @@
               result.push({ key: "リクエストコード", value: feliCaCommand.slice(3, 4) });
               result.push({ key: "タイムスロット", value: feliCaCommand.slice(4, 5) });
             } else if (commandCode == '06') {
-              debugger;
               const serviceCount = feliCaCommand.slice(9, 10);
               const blockCount = feliCaCommand.slice(10 + 2 * Number(serviceCount[0]), 10 + 2 * Number(serviceCount[0]) + 1);
               result.push({ key: "コマンドコード", value: commandCode });
